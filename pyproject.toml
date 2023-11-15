@@ -1,0 +1,26 @@
+[project]
+name = "tutlib"
+version = "0.0.1"
+
+dependencies = [
+    "python",
+    "setuptools",
+    "pip",
+    "numpy",
+    "xarray",
+    "netcdf4",
+    "pandas ",
+    "scipy",
+    "matplotlib",
+    "seaborn",
+    "mpltern",
+    "bokeh",
+    "scikit-learn",
+    "tqdm",
+    "bottleneck",
+    "sasdata",
+    "sasmodels",
+    "shapely",
+    "tensorflow[and-cuda]",
+    "gpflow>2",
+]
