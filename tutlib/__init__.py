@@ -1,1 +1,1 @@
-from .lib import *
+__all__ = ['GaussianProcess','VirtualInstrument','plot','util']

@@ -633,21 +633,20 @@ import gpflow
 class GaussianProcess:
     def __init__(self,dataset,kernel=None):
         self.reset_GP(dataset,kernel)
-        self.iter_monitor = lambda x: None
-        self.final_monitor = lambda x: None
         
     def construct_data(self):
-
         if 'labels_ordinal' not in self.dataset:
             raise ValueError('Must have labels_ordinal variable in Dataset before making GP!')
 
-            
         labels = self.dataset['labels_ordinal'].values
         if len(labels.shape)==1:
             labels = labels[:,np.newaxis]
             
         domain = self.transform_domain()
-        
+
+        # X = tf.Variable(domain,shape=(None,None),trainable=False)
+        # Y = tf.Variable(labels,shape=(None,None),trainable=False)
+        # data = (X,Y)
         data = (domain,labels)
         return data
         
@@ -660,14 +659,11 @@ class GaussianProcess:
       domain = ternary_to_xy(comp.values)
       return domain
             
-    def reset_GP(self,dataset,kernel=None):
+    def reset_GP(self,dataset,kernel):
         self.dataset = dataset
         self.n_classes = dataset.attrs['n_phases']
 
         data = self.construct_data()
-            
-        if kernel is None:
-            kernel = gpflow.kernels.Matern32(variance=0.1,lengthscales=0.1) 
             
         invlink = gpflow.likelihoods.RobustMax(self.n_classes)  
         likelihood = gpflow.likelihoods.MultiClass(self.n_classes, invlink=invlink)  
@@ -681,24 +677,8 @@ class GaussianProcess:
         self.trainable_variables = self.model.trainable_variables
         self.optimizer = tf.optimizers.Adam(learning_rate=0.001)
         
-    def reset_monitoring(self,log_dir='test/',iter_period=1):
-        model_task = ModelToTensorBoard(log_dir, self.model,keywords_to_monitor=['*'])
-        lml_task   = ScalarToTensorBoard(log_dir, lambda: self.loss(), "Training Loss")
-        
-        fast_tasks = MonitorTaskGroup([model_task,lml_task],period=iter_period)
-        self.iter_monitor = Monitor(fast_tasks)
-        
-        image_task = ImageToTensorBoard(
-            log_dir, 
-            self.plot, 
-            "Mean/Variance",
-            fig_kw=dict(figsize=(18,6)),
-            subplots_kw=dict(nrows=1,ncols=3)
-        )
-        slow_tasks = MonitorTaskGroup(image_task) 
-        self.final_monitor = Monitor(slow_tasks)
 
-    def optimize(self,N,final_monitor_step=None,progress_bar=False):
+    def optimize(self,N,progress_bar=False):
         if progress_bar:
             for i in tqdm.tqdm(tf.range(N),total=N):
                 self._step(i)
@@ -706,14 +686,9 @@ class GaussianProcess:
             for i in tf.range(N):
                 self._step(i)
             
-        if final_monitor_step is None:
-            final_monitor_step = i
-        self.final_monitor(final_monitor_step)
-            
     @tf.function
     def _step(self,i):
         self.optimizer.minimize(self.loss,self.trainable_variables) 
-        self.iter_monitor(i)
     
     def predict(self,components):
         domain = self.transform_domain(components=components)
