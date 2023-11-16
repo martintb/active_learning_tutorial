@@ -175,6 +175,15 @@ class VirtualSAS:
         return I.values
     
             
+    def measure_multiple(self,composition_list):
+      data_list = []
+      for comp in composition_list:
+          dataset = self.measure(**comp)
+          data_list.append(dataset)
+      dataset = xr.concat(data_list,dim='sample')
+      return dataset
+
+
     def measure(self,a,b,c):
         self.data['sample_composition'] = {
             'a':{'value':a,'units':''},
@@ -185,7 +194,7 @@ class VirtualSAS:
         
         sas = xr.DataArray(self.data['I'],coords={'q':self.data['q']})
         q_geom = np.geomspace(sas.q.min(),sas.q.max(), 250)
-        sas = sas.interp(q=q_geom)
+        sas = sas.groupby('q').mean().interp(q=q_geom)
         log_sas = xr.DataArray(np.log10(sas.values),coords={'logq':np.log10(sas.q.values)})
         delta_logq = (log_sas.logq[1] - log_sas.logq[0]).values[()]
         dlog_sas_np = savgol_filter(log_sas, window_length=31, polyorder=2, delta=delta_logq,deriv=1)
