@@ -1,5 +1,7 @@
+import pathlib
 import xarray as xr
-from tutlib.VirtualInstrument import VirtualInstrument
+import pandas as pd
+from tutlib.VirtualInstrument import VirtualSAS
 
 def get_virtual_instrument2(noise=1e-5,boundary_dataset_path='./reference_data/pluronic.nc',reference_data_path="./reference_data/"):
     boundary_dataset = xr.load_dataset(boundary_dataset_path)

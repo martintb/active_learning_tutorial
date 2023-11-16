@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import mpltern
+import itertools
+
+from tutlib.util import xy_to_ternary,ternary_to_xy
 
 def plot_ternary_surface(data, components, labels=None, set_axes_labels=True, ternary=True, **mpl_kw):
 
