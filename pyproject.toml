@@ -9,7 +9,6 @@ version = "0.0.1"
 requires-python = ">=3.9"
 
 dependencies = [
-    "setuptools",
     "pip",
     "numpy",
     "xarray",
@@ -19,15 +18,10 @@ dependencies = [
     "matplotlib",
     "seaborn",
     "mpltern",
-    "bokeh",
     "scikit-learn",
     "tqdm",
-    "bottleneck",
-    "sasdata",
     "sasmodels",
-    "sasview",
     "shapely",
-    "tensorflow[and-cuda]>2.14",
     "gpflow>2",
 ]
 
