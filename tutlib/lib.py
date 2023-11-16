@@ -15,6 +15,8 @@ import pandas as pd
 import xarray as xr
 import h5py #for Nexus file
 
+import pathlib
+
 import tqdm
 
 import sasmodels.data
@@ -260,7 +262,7 @@ def get_virtual_instrument2(noise=1e-5,boundary_dataset_path='./reference_data/p
     inst_client.data = {}
     inst_client.trace_boundaries(hull_tracing_ratio=0.25,drop_phases=['D'])
     for fname in ['low_q.ABS','med_q.ABS','high_q.ABS']:
-        data = sasmodels.data.load_data(pathlib.Path(reference_data_path)/fname)
+        data = sasmodels.data.load_data(str(pathlib.Path(reference_data_path)/fname))
         inst_client.add_configuration(
             q =list(data.x),
             I =list(data.y),
@@ -402,7 +404,7 @@ def get_virtual_instrument1(noise=1e-5,boundary_dataset_path='./reference_data/t
     inst_client.boundary_dataset = boundary_dataset
     inst_client.trace_boundaries(hull_tracing_ratio=0.95,drop_phases=['D'])
     for fname in ['low_q.ABS','med_q.ABS','high_q.ABS']:
-        data = sasmodels.data.load_data(pathlib.Path(reference_data_path)/fname)
+        data = sasmodels.data.load_data(str(pathlib.Path(reference_data_path)/fname))
         inst_client.add_configuration(
             q =list(data.x),
             I =list(data.y),
