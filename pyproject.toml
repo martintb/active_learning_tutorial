@@ -27,7 +27,7 @@ dependencies = [
     "sasmodels",
     "sasview",
     "shapely",
-    "tensorflow[and-cuda]",
+    "tensorflow[and-cuda]>2.14",
     "gpflow>2",
 ]
 
