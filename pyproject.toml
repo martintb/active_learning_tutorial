@@ -25,6 +25,7 @@ dependencies = [
     "bottleneck",
     "sasdata",
     "sasmodels",
+    "sasview",
     "shapely",
     "tensorflow[and-cuda]",
     "gpflow>2",
