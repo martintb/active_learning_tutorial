@@ -1,17 +1,4 @@
-FILE: FEB20107.SA4_NGB_Z290		 CREATED: Tue, Feb 11, 2020 6:07:06 PM
-LABEL: Nafion Ink PtCIL 1.0D 5p2m 5A Scatt                         
-MON CNT   LAMBDA   DET ANG   DET DIST   TRANS   THICK   AVE   STEP
-1e+08  5       0     5.2     0.70082     0.1C   1
-BCENT(X,Y)   A1(mm)   A2(mm)   A1A2DIST(m)   DL/L   BSTOP(mm)   DET_TYP 
-66.14  63.35  25.4    12.7    4.995    0.14    50.8    ORNL  
-SAM: FEB20107.SA4_NGB_Z290
-BGD: FEB20010.SA4_NGB_Z193,
-EMP: FEB20021.SA4_NGB_Z204,
-DIV: Sensitivity_Jan2020.div,
-MASK: DEFAULT.MASK,
-ABS Parameters (3-6): TSTAND=1;DSTAND=1;IZERO=9204.2;XSECT=1;SDEV=66.317
-Average Choices: AVTYPE=Circular;SAVE=Yes;NAME=Auto;PLOT=Yes;
-The 6 columns are | Q (1/A) | I(Q) (1/cm) | std. dev. I(Q) (1/cm) | sigmaQ | meanQ | ShadowFactor|
+q I dI dq sigmaQ shadowFactor
        0.009207           33.77            1.02        0.002432        0.009503               1
         0.01043           20.99          0.5446         0.00244          0.0107               1
         0.01166           13.49          0.3035        0.002453          0.0119               1

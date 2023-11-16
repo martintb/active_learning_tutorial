@@ -265,10 +265,10 @@ def get_virtual_instrument2(noise=1e-5,boundary_dataset_path='./reference_data/p
     for fname in ['low_q.ABS','med_q.ABS','high_q.ABS']:
         data = pd.read_csv(str(pathlib.Path(reference_data_path)/fname),delim_whitespace=True,skiprows=13,names=col_names)
         inst_client.add_configuration(
-            q =list(data.q),
-            I =list(data.I),
-            dI=list(data.dI),
-            dq=list(data.dq),
+            q =list(data.q.astype(np.float)),
+            I =list(data.I.astype(np.float)),
+            dI=list(data.dI.astype(np.float)),
+            dq=list(data.dq.astype(np.flo)),
             reset=False
         )
     inst_client.add_sasview_model(
