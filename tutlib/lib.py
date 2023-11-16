@@ -261,9 +261,8 @@ def get_virtual_instrument2(noise=1e-5,boundary_dataset_path='./reference_data/p
     inst_client.boundary_dataset = boundary_dataset
     inst_client.data = {}
     inst_client.trace_boundaries(hull_tracing_ratio=0.25,drop_phases=['D'])
-    col_names = ['q','I','dI','dq','sigmaq','ShadowFactor']
     for fname in ['low_q.ABS','med_q.ABS','high_q.ABS']:
-        data = pd.read_csv(str(pathlib.Path(reference_data_path)/fname),delim_whitespace=True,skiprows=13,names=col_names)
+        data = pd.read_csv(str(pathlib.Path(reference_data_path)/fname),delim_whitespace=True)
         inst_client.add_configuration(
             q =list(data.q.astype(np.float)),
             I =list(data.I.astype(np.float)),
@@ -404,9 +403,8 @@ def get_virtual_instrument1(noise=1e-5,boundary_dataset_path='./reference_data/t
     inst_client = VirtualSAS(noise=noise)
     inst_client.boundary_dataset = boundary_dataset
     inst_client.trace_boundaries(hull_tracing_ratio=0.95,drop_phases=['D'])
-    col_names = ['q','I','dI','dq','sigmaq','ShadowFactor']
     for fname in ['low_q.ABS','med_q.ABS','high_q.ABS']:
-        data = pd.read_csv(str(pathlib.Path(reference_data_path)/fname),delim_whitespace=True,skiprows=13,names=col_names)
+        data = pd.read_csv(str(pathlib.Path(reference_data_path)/fname),delim_whitespace=True)
         inst_client.add_configuration(
             q =list(data.q),
             I =list(data.I),
