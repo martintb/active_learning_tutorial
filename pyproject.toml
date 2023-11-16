@@ -31,4 +31,4 @@ dependencies = [
 ]
 
 [tool.setuptools]
-py-modules = ["tutlib"]
+packages = ["tutlib"]
