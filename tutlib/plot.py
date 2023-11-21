@@ -166,7 +166,7 @@ def plot_ternary(dataset,components,labels='labels',include_surface=True,surface
       b = [next_point[components[1]]],
       c = [next_point[components[2]]],
       mode="markers",
-      marker={'symbol':'x','size':12,'color':'magenta'}
+      marker={'symbol':'x','size':12,'color':'cyan'}
     )
     fig.add_trace(trace)
 
