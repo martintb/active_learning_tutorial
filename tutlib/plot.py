@@ -105,4 +105,60 @@ def plot_ternary_scatter(data, components, labels=None, set_axes_labels=True, te
             ax.set(**labels)
             ax.grid('on', color='black')
         return artists
+      
 
+def plot_ternary(dataset,components,labels='labels',include_surface=True,surface_data='acquisition',show=True):
+  layout = dict(
+          width=750,
+          ternary=dict(
+              sum=1,
+              aaxis=dict(
+                  title=dict(text='c'), min=0.01, linewidth=2, ticks="outside"
+              ),
+              baxis=dict(
+                  title=dict(text='a'), min=0.01, linewidth=2, ticks="outside"
+              ),
+              caxis=dict(
+                  title=dict(text='b'), min=0.01, linewidth=2, ticks="outside"
+              ),
+          ),
+          showlegend=False,
+      )
+
+  fig = go.FigureWidget(layout=layout)
+  if include_surface:
+    tern = go.Scatterternary(
+      a = dataset[components[0]+'_grid'],
+      b = dataset[components[1]+'_grid'],
+      c = dataset[components[2]+'_grid'],
+      mode="markers",
+      marker={'symbol':'circle','color':dataset[surface_data],'coloraxis':'coloraxis'}
+    )
+    fig.add_trace(tern)
+
+  markers = itertools.cycle(['triangle-up', 'triangle-down', 'triangle-left', 'triangle-right', 'circle', 'diamond'])
+  if labels in dataset:
+    for label in np.unique(dataset[labels]):
+      mask = dataset['labels']==label
+      tern = go.Scatterternary(
+        a = dataset[components[0]][mask],
+        b = dataset[components[1]][mask],
+        c = dataset[components[2]][mask],
+        mode="markers",
+        marker={'symbol':next(markers),'size':12}
+      )
+      fig.add_trace(tern)
+  else:
+    tern = go.Scatterternary(
+      a = dataset[components[0]],
+      b = dataset[components[1]],
+      c = dataset[components[2]],
+      mode="markers",
+      marker={'symbol':next(markers),'size':12}
+    )
+    fig.add_trace(tern)
+
+  if show:
+    fig.show()
+
+  return fig
