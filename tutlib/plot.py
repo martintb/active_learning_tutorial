@@ -3,6 +3,8 @@ import numpy as np
 import mpltern
 import itertools
 
+import plotly.graph_objects as go
+
 from tutlib.util import xy_to_ternary,ternary_to_xy
 
 def plot_ternary_surface(data, components, labels=None, set_axes_labels=True, ternary=True, **mpl_kw):
@@ -107,7 +109,7 @@ def plot_ternary_scatter(data, components, labels=None, set_axes_labels=True, te
         return artists
       
 
-def plot_ternary(dataset,components,labels='labels',include_surface=True,surface_data='acquisition',show=True):
+def plot_ternary(dataset,components,labels='labels',include_surface=True,surface_data='acquisition',show=True,next_point=None):
   layout = dict(
           width=750,
           ternary=dict(
@@ -127,36 +129,47 @@ def plot_ternary(dataset,components,labels='labels',include_surface=True,surface
 
   fig = go.FigureWidget(layout=layout)
   if include_surface:
-    tern = go.Scatterternary(
+    trace = go.Scatterternary(
       a = dataset[components[0]+'_grid'],
       b = dataset[components[1]+'_grid'],
       c = dataset[components[2]+'_grid'],
       mode="markers",
       marker={'symbol':'circle','color':dataset[surface_data],'coloraxis':'coloraxis'}
     )
-    fig.add_trace(tern)
+    fig.add_trace(trace)
 
   markers = itertools.cycle(['triangle-up', 'triangle-down', 'triangle-left', 'triangle-right', 'circle', 'diamond'])
   if labels in dataset:
     for label in np.unique(dataset[labels]):
       mask = dataset['labels']==label
-      tern = go.Scatterternary(
+      trace = go.Scatterternary(
         a = dataset[components[0]][mask],
         b = dataset[components[1]][mask],
         c = dataset[components[2]][mask],
         mode="markers",
         marker={'symbol':next(markers),'size':12}
       )
-      fig.add_trace(tern)
+      fig.add_trace(trace)
   else:
-    tern = go.Scatterternary(
+    trace = go.Scatterternary(
       a = dataset[components[0]],
       b = dataset[components[1]],
       c = dataset[components[2]],
       mode="markers",
       marker={'symbol':next(markers),'size':12}
     )
-    fig.add_trace(tern)
+    fig.add_trace(trace)
+
+  if next_point is not None:
+    trace = go.Scatterternary(
+      a = [next_point[components[0]]],
+      b = [next_point[components[1]]],
+      c = [next_point[components[2]]],
+      mode="markers",
+      marker={'symbol':'x','size':12,'color':'magenta'}
+    )
+    fig.add_trace(trace)
+
 
   if show:
     fig.show()
