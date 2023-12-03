@@ -19,7 +19,7 @@ from shapely import concave_hull
 
 from scipy.signal import savgol_filter
 
-from tutlib.util import ternary_to_xy,xy_to_ternary
+from tutlib.util import ternary_to_xy,xy_to_ternary,trace_boundaries
 
 
 class VirtualSAS:
@@ -37,26 +37,21 @@ class VirtualSAS:
         self.noise = noise
         
     def trace_boundaries(self,hull_tracing_ratio=0.1,drop_phases=None,reset=True):
-        if self.boundary_dataset is None:
-            raise ValueError('Must set boundary_dataset before calling trace_boundaries! Use client.set_driver_object.')
+      
+      if self.boundary_dataset is None:
+          raise ValueError('Must set boundary_dataset before calling trace_boundaries! Use client.set_driver_object.')
             
-        if drop_phases is None:
-            drop_phases = []
+      hulls = trace_boundaries(
+        self.boundary_dataset,
+        hull_tracing_ratio=hull_tracing_ratio,
+        drop_phases=drop_phases
+      )
+
+      if reset:
+        self.hulls = hulls
+      else:
+        self.hulls.update(hulls)
         
-        if reset:
-            self.hulls = {}
-        
-        label_variable = self.boundary_dataset.attrs['labels']
-        for label,sds in self.boundary_dataset.groupby(label_variable):
-            if label in drop_phases:
-                continue
-            comps = sds[sds.attrs['components']].to_array('component').transpose(...,'component')
-            #xy = ternary_to_xy(comps.values[:,[2,0,1]]) #shapely uses a different coordinate system than we do
-            xy = ternary_to_xy(comps.values) #shapely uses a different coordinate system than we do
-            mp = MultiPoint(xy)
-            hull = concave_hull(mp,ratio=hull_tracing_ratio)
-            self.hulls[label] = hull
-    
     def locate(self,composition,fast_locate=True):
         composition = np.array(composition)
         

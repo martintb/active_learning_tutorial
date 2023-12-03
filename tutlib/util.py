@@ -50,3 +50,27 @@ def make_ordinal_labels(labels):
     labels_ordinal = encoder.fit_transform(labels.values.reshape(-1, 1)).flatten()
     labels_ordinal = labels.copy(data=labels_ordinal)
     return labels_ordinal
+    
+from shapely import MultiPoint
+from shapely.geometry import Point
+from shapely import concave_hull
+
+def trace_boundaries(dataset,hull_tracing_ratio=0.2,drop_phases=None,reset=True):
+
+    if drop_phases is None:
+        drop_phases = []
+
+    hulls = {}
+
+    label_variable = dataset.attrs['labels']
+    for label,sds in dataset.groupby(label_variable):
+        if label in drop_phases:
+            continue
+        comps = sds[sds.attrs['components']].to_array('component').transpose(...,'component')
+        xy = ternary_to_xy(comps.values)
+        mp = MultiPoint(xy)
+        hull = concave_hull(mp,ratio=hull_tracing_ratio)
+        hulls[label] = hull
+
+    return hulls
+

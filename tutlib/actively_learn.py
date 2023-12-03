@@ -6,7 +6,7 @@ from tutlib.util import composition_grid_ternary
 from tutlib.plot import plot_ternary
 from IPython import display
 
-def actively_learn(input_dataset,niter,label,extrapolate,choose_next_acquisition,instrument,grid_pts_per_row=100,plot_progress=False):
+def actively_learn(input_dataset,niter,label,extrapolate,choose_next_acquisition,instrument,grid_pts_per_row=100,plot_progress=False,plot_every=5):
     grid = composition_grid_ternary(pts_per_row=grid_pts_per_row,basis=1.0)
 
     fig = None
@@ -32,7 +32,7 @@ def actively_learn(input_dataset,niter,label,extrapolate,choose_next_acquisition
         
         input_dataset = xr.concat([input_dataset,next_data],dim='sample')
 
-        if plot_progress:
+        if plot_progress and (step%plot_every)==0:
           if fig is not None:
             display.clear_output(wait=True)
           fig = plot_ternary(working_dataset,['c','a','b'],next_point=next_sample_dict)
