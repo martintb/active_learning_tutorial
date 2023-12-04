@@ -80,7 +80,7 @@ def actively_learn(
             fig.add_trace(go.Scatter(x=score_x,y=score_y,showlegend=False),row=1,col=1)
           elif plot=='both':
             fig = go.FigureWidget(make_subplots(1,2,specs=[[{'type':'xy'},{'type':'ternary'}]]))
-            ternary_fig = plot_ternary(working_dataset,['c','a','b'],next_point=next_sample_dict,show=False)
+            ternary_fig = plot_ternary(working_dataset,['c','a','b'],next_point=next_sample_dict,show=False,surface_colorbar=False)
             for data in ternary_fig.data:
               fig.add_trace(data.update(showlegend=False),row=1,col=2)
             fig.add_trace(go.Scatter(x=score_x,y=score_y,showlegend=False),row=1,col=1)

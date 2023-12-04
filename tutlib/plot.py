@@ -109,7 +109,7 @@ def plot_ternary_scatter(data, components, labels=None, set_axes_labels=True, te
         return artists
       
 
-def plot_ternary(dataset,components,labels='labels',include_surface=True,surface_data='acquisition',show=True,next_point=None):
+def plot_ternary(dataset,components,labels='labels',include_surface=True,surface_data='acquisition',show=True,next_point=None,surface_colorbar=True):
   layout = dict(
           width=750,
           ternary=dict(
@@ -129,12 +129,17 @@ def plot_ternary(dataset,components,labels='labels',include_surface=True,surface
 
   fig = go.FigureWidget(layout=layout)
   if include_surface:
+    if surface_colorbar:
+      marker={'symbol':'circle','color':dataset[surface_data],'coloraxis':'coloraxis'}
+    else:
+      marker = {'symbol':'circle','color':dataset[surface_data]}
     trace = go.Scatterternary(
       a = dataset[components[0]+'_grid'],
       b = dataset[components[1]+'_grid'],
       c = dataset[components[2]+'_grid'],
       mode="markers",
-      marker={'symbol':'circle','color':dataset[surface_data],'coloraxis':'coloraxis'}
+      marker=marker,
+      showlegend=False,
     )
     fig.add_trace(trace)
 
