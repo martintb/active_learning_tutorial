@@ -61,7 +61,7 @@ def actively_learn(
         #update results dictionary
         results['step'].append(step)
         results['score_mean'].append(mean)
-        results['score_std'].append(mean)
+        results['score_std'].append(std)
         results['dataset'].append(working_dataset)
 
         if plot and (step%plot_every)==0:
@@ -71,8 +71,8 @@ def actively_learn(
           if plot in ('both','score'):
             score_x = np.array(results['step'])
             score_y = np.array(results['score_mean'])
-            score_ylow = score_y-np.array(results['score_std'])
-            score_yhigh = score_y+np.array(results['score_std'])
+            score_ylo = score_y-np.array(results['score_std'])
+            score_yhi = score_y+np.array(results['score_std'])
 
           if plot=='ternary':
             fig = plot_ternary(working_dataset,['c','a','b'],next_point=next_sample_dict,show=False)
@@ -86,7 +86,9 @@ def actively_learn(
             ternary_fig = plot_ternary(working_dataset,['c','a','b'],next_point=next_sample_dict,show=False,surface_colorbar=False)
             for data in ternary_fig.data:
               fig.add_trace(data.update(showlegend=False),row=1,col=2)
-            fig.add_trace(go.Scatter(x=score_x,y=score_y,showlegend=False),row=1,col=1)
+            fig.add_trace(go.Scatter(x=score_x,y=score_ylo,showlegend=False,line={'color':'blue'},opacity=0.5),row=1,col=1)
+            fig.add_trace(go.Scatter(x=score_x,y=score_yhi,fill='tonexty',line={'color':'blue'},opacity=0.5,fillcolor='rgba(0.0,0.0,1.0,0.3)',showlegend=False),row=1,col=1)
+            fig.add_trace(go.Scatter(x=score_x,y=score_y,line={'color':'red'},showlegend=False),row=1,col=1)
             fig['layout']['xaxis']['title'] = 'Step'
             fig['layout']['yaxis']['title'] = 'Perimeter Score'
           else:
