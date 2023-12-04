@@ -2,7 +2,6 @@ from itertools import product
 import numpy as np
 from sklearn.preprocessing import OrdinalEncoder
 
-
 def ternary_to_xy(comps,normalize=True):
     '''Ternary composition to Cartesian coordinate'''
         
@@ -84,7 +83,6 @@ def calculate_perimeter_score(ds,gt_xy,hull_tracing_ratio=0.2):
     try:
       xy =  np.vstack(hull.boundary.xy).T
     except NotImplementedError:
-      print("NotImplemented!")
       pass
     else:
       _,dist = pairwise_distances_argmin_min(gt_xy,xy,metric='euclidean')
