@@ -34,6 +34,7 @@ def actively_learn(
     
     results = defaultdict(list)
     for step in tqdm.tqdm(range(niter)):
+        #prepare working dataset
         working_dataset = input_dataset.copy()
         working_dataset['a_grid'] = ('grid',grid[:,0])
         working_dataset['b_grid'] = ('grid',grid[:,1])
@@ -43,12 +44,12 @@ def actively_learn(
         working_dataset.attrs['components'] = ['c','a','b']
         working_dataset.attrs['components_grid'] = ['c_grid','a_grid','b_grid']
         
+        # label, extrap, choose..
         working_dataset = label(working_dataset)
-        
         working_dataset = extrapolate(working_dataset)
-        
         working_dataset = choose_next_acquisition(working_dataset)
             
+        # "measure" next sample"
         next_sample_dict = working_dataset.attrs['next_sample']
         next_data = instrument.measure(**next_sample_dict)
         
@@ -78,12 +79,16 @@ def actively_learn(
           elif plot=='score':
             fig = go.FigureWidget()
             fig.add_trace(go.Scatter(x=score_x,y=score_y,showlegend=False),row=1,col=1)
+            fig['layout']['xaxis']['title'] = 'Step'
+            fig['layout']['yaxis']['title'] = 'Perimeter Score'
           elif plot=='both':
             fig = go.FigureWidget(make_subplots(1,2,specs=[[{'type':'xy'},{'type':'ternary'}]]))
             ternary_fig = plot_ternary(working_dataset,['c','a','b'],next_point=next_sample_dict,show=False,surface_colorbar=False)
             for data in ternary_fig.data:
               fig.add_trace(data.update(showlegend=False),row=1,col=2)
             fig.add_trace(go.Scatter(x=score_x,y=score_y,showlegend=False),row=1,col=1)
+            fig['layout']['xaxis']['title'] = 'Step'
+            fig['layout']['yaxis']['title'] = 'Perimeter Score'
           else:
             raise ValueError("Plot must be 'ternary', 'score', 'both', or None")
           fig.show()
