@@ -74,3 +74,24 @@ def trace_boundaries(dataset,hull_tracing_ratio=0.2,drop_phases=None,reset=True)
 
     return hulls
 
+from sklearn.metrics import pairwise_distances_argmin_min
+
+def calculate_perimeter_score(ds,gt_xy,hull_tracing_ratio=0.2):
+  hulls = trace_boundaries(ds,hull_tracing_ratio=hull_tracing_ratio)
+  means = []
+  stds = []
+  for hull in hulls.values():
+    try:
+      xy =  np.vstack(hull.boundary.xy).T
+    except NotImplementedError:
+      print("NotImplemented!")
+      pass
+    else:
+      _,dist = pairwise_distances_argmin_min(gt_xy,xy,metric='euclidean')
+      means.append(dist.mean())
+      stds.append(dist.std())
+  if len(means)>0:
+    idxmin = np.argmin(means)
+    return means[idxmin],stds[idxmin]
+  else:
+    return np.nan,np.nan
