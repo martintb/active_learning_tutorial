@@ -41,6 +41,7 @@ def actively_learn(
         working_dataset['c_grid'] = ('grid',grid[:,2])
         working_dataset.attrs['step'] = step
         working_dataset.attrs['labels'] = 'labels'
+        working_dataset.attrs['labels_grid'] = 'labels_grid'
         working_dataset.attrs['components'] = ['c','a','b']
         working_dataset.attrs['components_grid'] = ['c_grid','a_grid','b_grid']
         
@@ -56,7 +57,12 @@ def actively_learn(
         input_dataset = xr.concat([input_dataset,next_data],dim='sample')
 
         #calculate perimeter score
-        mean,std = calculate_perimeter_score(working_dataset,gt_xy)
+        mean,std = calculate_perimeter_score(
+          working_dataset,
+          gt_xy,
+          component_attr='components_grid',
+          label_attr='labels_grid',
+          )
         
         #update results dictionary
         results['step'].append(step)
