@@ -3,14 +3,19 @@ import xarray as xr
 import pandas as pd
 from tutlib.VirtualInstrument import VirtualSAS
 
-def get_virtual_instrument1(noise=1e-5,boundary_dataset_path='./reference_data/triangleV2.nc',reference_data_path="./reference_data/"):
+def get_virtual_instrument1(
+  noise=1e-5,
+  hull_tracing_ratio=0.95,
+  boundary_dataset_path='./reference_data/triangleV2.nc',
+  reference_data_path="./reference_data/"
+  ):
     boundary_dataset = xr.load_dataset(boundary_dataset_path)
     boundary_dataset.attrs['labels'] = 'labels'
     boundary_dataset.attrs['components'] = ['c','a','b']
     
     inst_client = VirtualSAS(noise=noise)
     inst_client.boundary_dataset = boundary_dataset
-    inst_client.trace_boundaries(hull_tracing_ratio=0.95,drop_phases=['D'])
+    inst_client.trace_boundaries(hull_tracing_ratio=hull_tracing_ratio,drop_phases=['D'])
     for fname in ['low_q.ABS','med_q.ABS','high_q.ABS']:
         data = pd.read_csv(str(pathlib.Path(reference_data_path)/fname),delim_whitespace=True)
         inst_client.add_configuration(
