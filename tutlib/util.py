@@ -54,18 +54,25 @@ from shapely import MultiPoint
 from shapely.geometry import Point
 from shapely import concave_hull
 
-def trace_boundaries(dataset,hull_tracing_ratio=0.2,drop_phases=None,reset=True):
+def trace_boundaries(
+  dataset, 
+  hull_tracing_ratio=0.2,
+  drop_phases=None,
+  reset=True, 
+  component_attr='component',
+  label_attr='labels'
+  ):
 
     if drop_phases is None:
         drop_phases = []
 
     hulls = {}
 
-    label_variable = dataset.attrs['labels']
+    label_variable = dataset.attrs[label_attr]
     for label,sds in dataset.groupby(label_variable):
         if label in drop_phases:
             continue
-        comps = sds[sds.attrs['components']].to_array('component').transpose(...,'component')
+        comps = sds[sds.attrs[component_attr]].to_array('component').transpose(...,'component')
         xy = ternary_to_xy(comps.values)
         mp = MultiPoint(xy)
         hull = concave_hull(mp,ratio=hull_tracing_ratio)
@@ -75,8 +82,8 @@ def trace_boundaries(dataset,hull_tracing_ratio=0.2,drop_phases=None,reset=True)
 
 from sklearn.metrics import pairwise_distances_argmin_min
 
-def calculate_perimeter_score(ds,gt_xy,hull_tracing_ratio=0.2):
-  hulls = trace_boundaries(ds,hull_tracing_ratio=hull_tracing_ratio)
+def calculate_perimeter_score(ds,gt_xy,hull_tracing_ratio=0.2,component_attr='component',label_attr='labels'):
+  hulls = trace_boundaries(ds,hull_tracing_ratio=hull_tracing_ratio,component_attr=component_attr,label_attr=label_attr)
   means = []
   stds = []
   for hull in hulls.values():
