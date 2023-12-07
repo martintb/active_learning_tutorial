@@ -84,6 +84,10 @@ from sklearn.metrics import pairwise_distances_argmin_min
 
 def calculate_perimeter_score(ds,gt_xy,hull_tracing_ratio=0.2,component_attr='components',label_attr='labels'):
   hulls = trace_boundaries(ds,hull_tracing_ratio=hull_tracing_ratio,component_attr=component_attr,label_attr=label_attr)
+  
+  if len(hulls)==1:
+    return np.nan,np.nan
+    
   means = []
   stds = []
   for hull in hulls.values():
