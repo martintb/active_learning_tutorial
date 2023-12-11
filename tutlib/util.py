@@ -105,7 +105,7 @@ def calculate_perimeter_score_v1(ds,gt_xy,hull_tracing_ratio=0.2,component_attr=
   else:
     return np.nan,np.nan
 
-def calculate_perimeter_score(hull1,hull2):
+def calculate_perimeter_score_v2(hull1,hull2):
   hull1_xy = np.vstack(hull1.boundary.xy).T
   hull2_xy = np.vstack(hull2.boundary.xy).T
   
@@ -131,7 +131,8 @@ def calculate_perimeter_score(hull1,hull2):
   coord = np.array(coord)
 
   out = { 
-      'score':dist.mean(), 
+      'mean':dist.mean(), 
+      'std':dist.std(), 
       'pair_dist':dist, 
       'pair_idx':idx, 
       'pair_coord':coord, 
