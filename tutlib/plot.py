@@ -180,3 +180,52 @@ def plot_ternary(dataset,components,labels='labels',include_surface=True,surface
     fig.show()
 
   return fig
+  
+def make_score_plots(results_dict):
+  score_x = results_dict['step']
+  df_mean = pd.DataFrame(results_dict['score_mean'])
+  df_std = pd.DataFrame(results_dict['score_std'])
+  mask = df_mean.isna().any(axis=1)
+  df_mean.loc[mask] = pd.NA
+  df_std.loc[mask] = pd.NA
+
+  plots = {}
+  for i,(GT,score_y) in enumerate(df_mean.items(),start=1):
+    score_ylo = score_y - df_std[GT]
+    score_yhi = score_y + df_std[GT]
+    plots[GT] = {}
+    plots[GT]['lo'] = go.Scatter(
+        x=score_x,
+        y=score_ylo,
+        showlegend=False,
+        line={'color':'blue'},
+        opacity=0.5
+        )
+
+    plots[GT]['hi'] = go.Scatter(
+        x=score_x,
+        y=score_yhi,
+        fill='tonexty',
+        line={'color':'blue'},
+        opacity=0.5,
+        fillcolor='rgba(0.0,0.0,1.0,0.3)',
+        showlegend=False)
+
+    plots[GT]['mean'] = go.Scatter(
+        x=score_x,
+        y=score_y,
+        line={'color':'red'},
+        showlegend=False)
+  return plots
+
+def make_boundary_plots(score_dict):
+  gt_xy = score_dict['hull1_xy']
+  xy = score_dict['hull2_xy']
+  idx = score_dict['pair_idx']
+  pair_xy = score_dict['pair_coord']
+
+  out = {}
+  out['GT'] = go.Scatter(x = gt_xy.T[0],y=gt_xy.T[1],mode='lines+markers',line={'color':'black'},marker={'symbol':'circle-open'},name='GT')
+  out['AL'] =  go.Scatter(x = xy.T[0],y=xy.T[1],mode='lines+markers',line={'color':'green'},marker={'symbol':'triangle-up-open'},name='AL')
+  out['pairs'] = go.Scatter(x=pair_xy[:,0],y=pair_xy[:,1],line={'color':'red'},opacity=0.5,name=None)
+  return out
