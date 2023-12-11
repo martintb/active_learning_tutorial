@@ -1,6 +1,7 @@
 from collections import defaultdict
 import numpy as np
 import xarray as xr
+import pandas as pd
 import tqdm
 
 import plotly.graph_objects as go
@@ -189,14 +190,31 @@ def actively_learn_v2(
             display.clear_output(wait=True)
 
           n_rows = len(best_scores) - len(plot_skip_phases) + 1
-          specs = [[{'type':'ternary',"colspan":2},None]] + [[{'type':'xy'},{'type':'xy'}]]*(n_rows-1)
+          #specs = [[{'type':'ternary',"colspan":2},None]] + [[{'type':'xy'},{'type':'xy'}]]*(n_rows-1)
+          specs = [[{'type':'ternary'},{'type':'ternary'}]] + [[{'type':'xy'},{'type':'xy'}]]*(n_rows-1)
           subplots = make_subplots(n_rows,2,specs=specs )
           fig = go.FigureWidget(subplots,layout={'width':600,'height':1800})
 
-          ternary_fig = plot_ternary(working_dataset,['c','a','b'],next_point=next_sample_dict,show=False,surface_colorbar=False)
+          ternary_fig = plot_ternary(
+            working_dataset,
+            ['c','a','b'],
+            next_point=next_sample_dict,
+            show=False,
+            surface_colorbar=False,
+            )
           for data in ternary_fig.data:
             fig.add_trace(data.update(showlegend=False),row=1,col=1)
 
+          ternary_fig = plot_ternary(
+            working_dataset,
+            ['c','a','b'],
+            next_point=next_sample_dict,
+            show=False,
+            surface_colorbar=False,
+            surface_data='labels_grid'
+            )
+          for data in ternary_fig.data:
+            fig.add_trace(data.update(showlegend=False),row=1,col=2)
 
           if len(best_scores)>1:
             score_plots = make_score_plots(results)

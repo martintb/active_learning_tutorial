@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import mpltern
 import itertools
 
@@ -180,7 +181,7 @@ def plot_ternary(dataset,components,labels='labels',include_surface=True,surface
     fig.show()
 
   return fig
-  
+
 def make_score_plots(results_dict):
   score_x = results_dict['step']
   df_mean = pd.DataFrame(results_dict['score_mean'])
