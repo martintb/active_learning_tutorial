@@ -82,7 +82,7 @@ def trace_boundaries(
 
 from sklearn.metrics import pairwise_distances_argmin_min
 
-def calculate_perimeter_score(ds,gt_xy,hull_tracing_ratio=0.2,component_attr='components',label_attr='labels'):
+def calculate_perimeter_score_v1(ds,gt_xy,hull_tracing_ratio=0.2,component_attr='components',label_attr='labels'):
   hulls = trace_boundaries(ds,hull_tracing_ratio=hull_tracing_ratio,component_attr=component_attr,label_attr=label_attr)
   
   if len(hulls)==1:
@@ -104,3 +104,39 @@ def calculate_perimeter_score(ds,gt_xy,hull_tracing_ratio=0.2,component_attr='co
     return means[idxmin],stds[idxmin]
   else:
     return np.nan,np.nan
+
+def calculate_perimeter_score(hull1,hull2):
+  hull1_xy = np.vstack(hull1.boundary.xy).T
+  hull2_xy = np.vstack(hull2.boundary.xy).T
+  
+  idx1,dist1 = pairwise_distances_argmin_min(hull2_xy,hull1_xy,metric='euclidean')
+  idx2,dist2 = pairwise_distances_argmin_min(hull1_xy,hull2_xy,metric='euclidean')
+
+  # build index list of closest pairs
+  idx1 = np.vstack([np.arange(idx1.shape[0]),idx1]).T
+  idx2 = np.vstack([idx2,np.arange(idx2.shape[0])]).T
+
+  dist =  np.hstack([dist1,dist2])
+  idx =  np.vstack([idx1,idx2])
+  
+  # remove duplicate pairs from idx and dist
+  unique = np.unique(idx,axis=0,return_index=True)[1]
+  idx = idx[unique]
+  dist = dist[unique]
+
+  # build list of distance pair coordinates for plotting
+  coord = []
+  for i,j in idx:
+    coord.extend([hull1_xy[j],hull2_xy[i],[np.nan,np.nan]])
+  coord = np.array(coord)
+
+  out = { 
+      'score':dist.mean(), 
+      'pair_dist':dist, 
+      'pair_idx':idx, 
+      'pair_coord':coord, 
+      'hull1_xy':hull1_xy, 
+      'hull2_xy':hull2_xy, 
+      }
+
+  return out
