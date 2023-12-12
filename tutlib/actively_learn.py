@@ -126,7 +126,6 @@ def actively_learn_v2(
     boundary_dataset = instrument.boundary_dataset.copy()
     boundary_dataset.attrs['components'] = ['b','c','a']
     gt_hulls = trace_boundaries(boundary_dataset,hull_tracing_ratio=0.2)
-    gt_xy =  np.vstack(gt_hulls['A'].boundary.xy).T# needs to be generalized for multi-phase
 
     if plot_skip_phases is None:
       plot_skip_phases = []
@@ -190,6 +189,9 @@ def actively_learn_v2(
             display.clear_output(wait=True)
 
           n_rows = len(best_scores) - len(plot_skip_phases) + 1
+          #print('n_rows',n_rows)
+          #print('best_scores',best_scores.keys())
+          #print('results[score_mean]',results['score_mean'])
           #specs = [[{'type':'ternary',"colspan":2},None]] + [[{'type':'xy'},{'type':'xy'}]]*(n_rows-1)
           specs = [[{'type':'ternary'},{'type':'ternary'}]] + [[{'type':'xy'},{'type':'xy'}]]*(n_rows-1)
           subplots = make_subplots(n_rows,2,specs=specs )
@@ -218,14 +220,16 @@ def actively_learn_v2(
 
           if len(best_scores)>1:
             score_plots = make_score_plots(results)
+            #print(len(best_scores),len(score_plots))
             row = 2
-            for key,value in score_plots.items():
+            for key in best_scores.keys():
               if key in plot_skip_phases:
                 continue
 
-              fig.add_trace(value['lo'],row=row,col=1)
-              fig.add_trace(value['hi'],row=row,col=1)
-              fig.add_trace(value['mean'],row=row,col=1)
+              #print('row=',row)
+              fig.add_trace(score_plots[key]['lo'],row=row,col=1)
+              fig.add_trace(score_plots[key]['hi'],row=row,col=1)
+              fig.add_trace(score_plots[key]['mean'],row=row,col=1)
 
               try:
                 best_score = best_scores[key]

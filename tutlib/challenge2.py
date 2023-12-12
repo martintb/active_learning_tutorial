@@ -5,7 +5,7 @@ from tutlib.VirtualInstrument import VirtualSAS
 
 def get_virtual_instrument2(
   noise=1e-5,
-  hull_tracing_ratio=hull_tracing_ratio,
+  hull_tracing_ratio=0.2,
   boundary_dataset_path='./reference_data/pluronic.nc',
   reference_data_path="./reference_data/"
   ):
@@ -23,10 +23,10 @@ def get_virtual_instrument2(
     for fname in ['low_q.ABS','med_q.ABS','high_q.ABS']:
         data = pd.read_csv(str(pathlib.Path(reference_data_path)/fname),delim_whitespace=True)
         inst_client.add_configuration(
-            q =list(data.q.astype(np.float)),
-            I =list(data.I.astype(np.float)),
-            dI=list(data.dI.astype(np.float)),
-            dq=list(data.dq.astype(np.flo)),
+            q =list(data.q),
+            I =list(data.I),
+            dI=list(data.dI),
+            dq=list(data.dq),
             reset=False
         )
     inst_client.add_sasview_model(
