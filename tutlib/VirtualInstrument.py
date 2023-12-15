@@ -20,6 +20,7 @@ from shapely import concave_hull
 from scipy.signal import savgol_filter
 
 from tutlib.util import ternary_to_xy,xy_to_ternary,trace_boundaries
+from tutlib.plot import plot_ternary
 
 
 class VirtualSAS:
@@ -196,47 +197,29 @@ class VirtualSAS:
         return dataset
     
     def _plot_ground_truth_data(self,**mpl_kw):
-        if self.hulls is None:
-            raise ValueError('No hulls calculated. Run .trace_boundaries')
-            
-        fig,ax = plt.subplots(subplot_kw={'projection':'ternary'})
-        labels = self.boundary_dataset[self.boundary_dataset.attrs['labels']]
-        
         components = self.boundary_dataset.attrs['components']
-        coords = np.vstack(list(self.boundary_dataset[c].values for c in components)).T
-        
-        artists = []
-        markers = itertools.cycle(['^', 'v', '<', '>', 'o', 'd', 'p', 'x'])
-        for label in np.unique(labels):
-            mask = (labels == label)
-            mpl_kw['marker'] = next(markers)
-            artists.append(ax.scatter(*coords[mask].T, **mpl_kw))
-            
-        labels = {k: v for k, v in zip(['tlabel', 'llabel', 'rlabel'], components)}
-        ax.set(**labels)
-        ax.grid('on', color='black')
-        return artists
+        fig = plot_ternary(self.boundary_dataset,components,include_surface=False)
+        return fig
     
     def _plot_ground_truth(self,**mpl_kw):
-        if self.hulls is None:
-            raise ValueError('No hulls calculated. Run .trace_boundaries')
-            
-        fig,ax = plt.subplots(subplot_kw={'projection':'ternary'})
-        
-        components = self.boundary_dataset.attrs['components']
-        coords = np.vstack(list(self.boundary_dataset[c].values for c in components)).T
-        
-        artists = []
-        markers = itertools.cycle(['^', 'v', '<', '>', 'o', 'd', 'p', 'x'])
-        for label,hull in self.hulls.items():
-            mpl_kw['marker'] = next(markers)
-            
-            xy = hull.boundary.coords.xy
-            xy = np.array(xy).T
-            xy = xy_to_ternary(xy)
-            artists.append(ax.scatter(*xy.T, **mpl_kw))
-            
-        labels = {k: v for k, v in zip(['tlabel', 'llabel', 'rlabel'], components)}
-        ax.set(**labels)
-        ax.grid('on', color='black')
-        return artists
+      if self.hulls is None:
+        raise ValueError('No hulls calculated. Run .trace_boundaries')
+    
+      components = self.boundary_dataset.attrs['components']
+    
+      comps = []
+      labels = []
+      for label,hull in self.hulls.items():
+        xy = hull.boundary.coords.xy
+        xy = np.array(xy).T
+        comps.extend(xy_to_ternary(xy))
+        labels.extend([label]*xy.shape[0])
+    
+      comps = np.array(comps)
+      bd = self.boundary_dataset.copy()
+      bd['a'] = ('samples',comps[:,1])
+      bd['b'] = ('samples',comps[:,2])
+      bd['c'] = ('samples',comps[:,0])
+      bd['labels'] = ('samples',labels)
+      fig = plot_ternary(bd,['c','a','b'],include_surface=False)
+      return fig
