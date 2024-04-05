@@ -153,6 +153,7 @@ def plot_ternary(dataset,components,labels='labels',include_surface=True,surface
         b = dataset[components[1]][mask],
         c = dataset[components[2]][mask],
         mode="markers",
+        cliponaxis=False,
         marker={'symbol':next(markers),'size':12}
       )
       fig.add_trace(trace)
@@ -162,6 +163,7 @@ def plot_ternary(dataset,components,labels='labels',include_surface=True,surface
       b = dataset[components[1]].values,
       c = dataset[components[2]].values,
       mode="markers",
+      cliponaxis=False,
       marker={'symbol':next(markers),'size':12}
     )
     fig.add_trace(trace)
