@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+import warnings
 import pathlib
 import itertools
 
@@ -182,7 +183,12 @@ class VirtualSAS:
         sas = xr.DataArray(self.data['I'],coords={'q':self.data['q']})
         q_geom = np.geomspace(sas.q.min(),sas.q.max(), 250)
         sas = sas.groupby('q').mean().interp(q=q_geom)
-        log_sas = xr.DataArray(np.log10(sas.values),coords={'logq':np.log10(sas.q.values)})
+
+        #block negative values
+        with warnings.catch_warnings():
+          warnings.simplefilter("ignore")
+          log_sas = xr.DataArray(np.log10(sas.values),coords={'logq':np.log10(sas.q.values)})
+
         delta_logq = (log_sas.logq[1] - log_sas.logq[0]).values[()]
         dlog_sas_np = savgol_filter(log_sas, window_length=31, polyorder=2, delta=delta_logq,deriv=1)
         dlog_sas = log_sas.copy(data=dlog_sas_np)
