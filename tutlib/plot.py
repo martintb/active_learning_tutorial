@@ -158,9 +158,9 @@ def plot_ternary(dataset,components,labels='labels',include_surface=True,surface
       fig.add_trace(trace)
   else:
     trace = go.Scatterternary(
-      a = dataset[components[0]],
-      b = dataset[components[1]],
-      c = dataset[components[2]],
+      a = dataset[components[0]].values,
+      b = dataset[components[1]].values,
+      c = dataset[components[2]].values,
       mode="markers",
       marker={'symbol':next(markers),'size':12}
     )

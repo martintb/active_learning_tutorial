@@ -3,11 +3,11 @@ import xarray as xr
 import pandas as pd
 from tutlib.VirtualInstrument import VirtualSAS
 
-def get_virtual_instrument1(
+def get_virtual_instrument(
   noise=1e-5,
-  hull_tracing_ratio=0.95,
-  boundary_dataset_path='./reference_data/triangleV2.nc',
-  reference_data_path="./reference_data/"
+  hull_tracing_ratio=0.2,
+  boundary_dataset_path="/content/active_learning_tutorial/challenge_datasets/N.nc",
+  reference_data_path="./reference_sans",
   ):
     boundary_dataset = xr.load_dataset(boundary_dataset_path)
     boundary_dataset.attrs['labels'] = 'labels'

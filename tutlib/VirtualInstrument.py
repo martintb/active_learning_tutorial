@@ -194,6 +194,15 @@ class VirtualSAS:
         dataset['a'] = a
         dataset['b'] = b
         dataset['c'] = c
+
+        dataset['sas'].attrs['description'] = 'virtual scattering data'
+        dataset['log_sas'].attrs['description'] = 'log10 scaled virtual scattering data'
+        dataset['dlog_sas'].attrs['description'] = 'first derivative of log10 scaled virtual scattering data'
+        dataset['a'].attrs['description'] = 'Component "a" mass fraction (a+b+c=1.0)'
+        dataset['b'].attrs['description'] = 'Component "b" mass fraction (a+b+c=1.0)'
+        dataset['c'].attrs['description'] = 'Component "c" mass fraction (a+b+c=1.0)'
+        dataset['q'].attrs['description'] = 'wavector/wavenumbers for virtual scattering intensity'
+        dataset['logq'].attrs['description'] = 'log10 scaled wavector/wavenumbers for virtual scattering intensity'
         return dataset
     
     def _plot_ground_truth_data(self,**mpl_kw):
