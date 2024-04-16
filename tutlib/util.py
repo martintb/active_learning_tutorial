@@ -105,10 +105,25 @@ def calculate_perimeter_score_v1(ds,gt_xy,hull_tracing_ratio=0.2,component_attr=
   else:
     return np.nan,np.nan
 
+def get_xy(hull):
+    try:
+        x,y = hull.boundary.xy
+    except NotImplementedError:
+        if hasattr(hull,'geoms'):
+            x = []; y = []
+            for geom in list(hull.boundary.geoms):
+                xx,yy = geom.xy
+                x.extend(xx)
+                y.extend(yy)
+        else:
+            x,y = None,None
+    return x,y
+           
+
 def calculate_perimeter_score_v2(hull1,hull2):
-  hull1_xy = np.vstack(hull1.boundary.xy).T
-  hull2_xy = np.vstack(hull2.boundary.xy).T
-  
+  hull1_xy = np.vstack(get_xy(hull1)).T
+  hull2_xy = np.vstack(get_xy(hull2)).T
+
   idx1,dist1 = pairwise_distances_argmin_min(hull2_xy,hull1_xy,metric='euclidean')
   idx2,dist2 = pairwise_distances_argmin_min(hull1_xy,hull2_xy,metric='euclidean')
 
