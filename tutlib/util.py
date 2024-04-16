@@ -124,8 +124,14 @@ def calculate_perimeter_score_v2(hull1,hull2):
   hull1_xy = np.vstack(get_xy(hull1)).T
   hull2_xy = np.vstack(get_xy(hull2)).T
 
-  idx1,dist1 = pairwise_distances_argmin_min(hull2_xy,hull1_xy,metric='euclidean')
-  idx2,dist2 = pairwise_distances_argmin_min(hull1_xy,hull2_xy,metric='euclidean')
+
+  try:
+    idx1,dist1 = pairwise_distances_argmin_min(hull2_xy,hull1_xy,metric='euclidean')
+    idx2,dist2 = pairwise_distances_argmin_min(hull1_xy,hull2_xy,metric='euclidean')
+  except:
+    import pdb
+    pdb.set_trace()
+    
 
   # build index list of closest pairs
   idx1 = np.vstack([np.arange(idx1.shape[0]),idx1]).T

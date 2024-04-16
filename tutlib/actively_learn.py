@@ -72,14 +72,24 @@ def actively_learn(
         #calculate all possible perimeter scores
         wd = working_dataset.copy()
         wd.attrs['components_grid'] = ['b_grid','c_grid','a_grid']
-        al_hulls = trace_boundaries(wd,component_attr='components_grid',label_attr='labels_grid',hull_tracing_ratio=0.2)
+        al_hulls = trace_boundaries(wd,component_attr='components_grid',label_attr='labels_grid',hull_tracing_ratio=0.25)
         all_scores = []
         for gt_name,gt_hull in gt_hulls.items():
           for al_name,al_hull in al_hulls.items():
-            score = calculate_perimeter_score_v2(gt_hull,al_hull)
+            if al_hull.geom_type=='Point':
+                 continue
+            elif al_hull.geom_type == 'LineString':
+                 continue
+
+            try:
+                score = calculate_perimeter_score_v2(gt_hull,al_hull)
+            except NotImplementedError:
+                continue
+
             score['GT'] = gt_name
             score['AL'] = al_name
             all_scores.append(score)
+        
 
         # find best matches for each ground truth phase
         all_scores = sorted(all_scores,key = lambda x: x['mean'])
