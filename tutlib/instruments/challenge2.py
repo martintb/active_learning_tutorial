@@ -4,7 +4,7 @@ import pandas as pd
 from tutlib.VirtualInstrument import VirtualSAS
 
 def get_virtual_instrument(
-  noise=1e-1,
+  noise=1e-2,
   hull_tracing_ratio=0.25,
   boundary_dataset_path="/content/active_learning_tutorial/challenge_datasets/challenge3.nc",
   reference_data_path="./reference_sans",
