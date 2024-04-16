@@ -94,7 +94,7 @@ def actively_learn(
         results['step'].append(step)
         results['score_mean'].append({key:value['mean'] for key,value in best_scores.items()})
         results['score_std'].append({key:value['std'] for key,value in best_scores.items()})
-        results['dataset'].append(working_dataset)
+        #results['dataset'].append(working_dataset)
         results['scores'].append(best_scores)
 
         if plot and (step%plot_every)==0:
@@ -160,6 +160,23 @@ def actively_learn(
           fig.show()
 
         
-    return results['dataset'][-1]
+    ds_output = working_dataset.copy()
+    ds_output['score_mean'] = (
+        pd
+        .DataFrame(results['score_mean'])
+        .to_xarray()
+        .rename(index='AL_step')
+        .to_array('phase')
+        .transpose('AL_step',...)
+    )
+    ds_output['score_std'] = (
+        pd
+        .DataFrame(results['score_std'])
+        .to_xarray()
+        .rename(index='AL_step')
+        .to_array('phase')
+        .transpose('AL_step',...)
+    )
+    return ds_output
 
 
