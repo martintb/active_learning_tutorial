@@ -108,9 +108,20 @@ class VirtualSAS:
         }
         
     def generate(self,label):
-        kw          = self.sasmodels[label]['kw']
         calculators = self.sasmodels[label]['calculators']
         sasdatas    = self.sasmodels[label]['sasdata']
+
+        # build kw dict, handle functions of compositional variables
+        components = self.boundary_dataset.attrs['components']
+        composition = {component:self.data['sample_composition'][component]['value'] for component in components}
+        
+        kw = {}
+        for k,v in self.sasmodels[label]['kw'].items():
+          try:
+            kw[k] = v(**composition)
+          except TypeError:
+            kw[k] = v
+
         
         I_noiseless_list = []
         I_list = []

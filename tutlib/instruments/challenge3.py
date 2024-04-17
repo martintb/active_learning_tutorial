@@ -1,7 +1,12 @@
 import pathlib
 import xarray as xr
 import pandas as pd
+import numpy as np
 from tutlib.VirtualInstrument import VirtualSAS
+
+def sphere_radius(a,b,c, a_c=0.47, b_c=0.37, c_c=0.16):
+  dist = np.sqrt(np.square(a-a_c)**2.0 +  np.square(b-b_c) + np.square(c-c_c))
+  return   600-2400*dist
 
 
 
@@ -35,7 +40,7 @@ def get_virtual_instrument(
           'background':1.0,
           'sld':1.0,
           'sld_solvent':6.0,
-          'radius':200, 
+          'radius':sphere_radius, 
           }
        )
        
