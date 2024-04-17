@@ -6,7 +6,7 @@ from tutlib.VirtualInstrument import VirtualSAS
 def get_virtual_instrument(
   noise=5e-1,
   hull_tracing_ratio=0.25,
-  boundary_dataset_path="/content/active_learning_tutorial/challenge_datasets/challenge2.nc",
+  boundary_dataset_path="/content/active_learning_tutorial/challenge_datasets/challenge1.nc",
   reference_data_path="./reference_sans",
   ):
     boundary_dataset = xr.load_dataset(boundary_dataset_path)
