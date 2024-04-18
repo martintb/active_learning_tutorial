@@ -59,9 +59,11 @@ def actively_learn(
         working_dataset.attrs['components_grid'] = ['c_grid','a_grid','b_grid']
         
         # label, extrap, choose..
-        working_dataset = label(working_dataset,num_phases=num_phases)
-        working_dataset = extrapolate(working_dataset)
-        working_dataset = choose_next_acquisition(working_dataset)
+        with warnings.catch_warnings():
+          warnings.simplefilter("ignore")
+          working_dataset = label(working_dataset,num_phases=num_phases)
+          working_dataset = extrapolate(working_dataset)
+          working_dataset = choose_next_acquisition(working_dataset)
             
         # "measure" next sample"
         next_sample_dict = working_dataset.attrs['next_sample']
