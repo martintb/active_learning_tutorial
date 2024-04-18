@@ -6,7 +6,7 @@ from tutlib.VirtualInstrument import VirtualSAS
 def get_virtual_instrument(
   noise=1e-2,
   hull_tracing_ratio=0.25,
-  boundary_dataset_path="/content/active_learning_tutorial/challenge_datasets/challenge2v2.nc",
+  boundary_dataset_path="/content/active_learning_tutorial/challenge_datasets/challenge2v3.nc",
   reference_data_path="./reference_sans",
   ):
     boundary_dataset = xr.load_dataset(boundary_dataset_path)
@@ -96,5 +96,17 @@ def get_virtual_instrument(
             'background':1.0,
             'power':4.0,
         }
+    )
+
+    inst_client.add_sasview_model( 
+      label='L2',
+       model_name = 'sphere', 
+       model_kw = {
+          'scale':0.005,
+          'background':1.0,
+          'sld':1.0,
+          'sld_solvent':6.0,
+          'radius':200, 
+          }
     )
     return inst_client

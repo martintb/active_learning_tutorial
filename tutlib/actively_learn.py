@@ -75,6 +75,7 @@ def actively_learn(
         wd = working_dataset.copy()
         wd.attrs['components_grid'] = ['b_grid','c_grid','a_grid']
         al_hulls = trace_boundaries(wd,component_attr='components_grid',label_attr='labels_grid',hull_tracing_ratio=0.25)
+        # al_hulls = trace_boundaries(wd,component_attr='components',label_attr='labels',hull_tracing_ratio=0.25)
         all_scores = []
         for gt_name,gt_hull in gt_hulls.items():
           for al_name,al_hull in al_hulls.items():
@@ -106,15 +107,17 @@ def actively_learn(
         results['step'].append(step)
         results['score_mean'].append({key:value['mean'] for key,value in best_scores.items()})
         results['score_std'].append({key:value['std'] for key,value in best_scores.items()})
-        #results['dataset'].append(working_dataset)
+        # results['dataset'].append(working_dataset)
         results['scores'].append(best_scores)
 
         if plot and (step%plot_every)==0:
           if fig is not None:
             display.clear_output(wait=True)
 
-          n_rows = len(best_scores) - len(plot_skip_phases) + 1
-          #print('n_rows',n_rows)
+          n_rows = len(best_scores) + 1
+          if 'D' in best_scores.keys():
+            n_rows-=1
+          # print('n_rows',n_rows)
           #print('best_scores',best_scores.keys())
           #print('results[score_mean]',results['score_mean'])
           #specs = [[{'type':'ternary',"colspan":2},None]] + [[{'type':'xy'},{'type':'xy'}]]*(n_rows-1)
@@ -145,13 +148,14 @@ def actively_learn(
 
           if len(best_scores)>1:
             score_plots = make_score_plots(results)
-            #print(len(best_scores),len(score_plots))
+            # print(len(best_scores),len(score_plots))
             row = 2
             for key in best_scores.keys():
+              # print(key)
               if key in plot_skip_phases:
                 continue
 
-              #print('row=',row)
+              # print('row=',row)
               fig.add_trace(score_plots[key]['lo'],row=row,col=1)
               fig.add_trace(score_plots[key]['hi'],row=row,col=1)
               fig.add_trace(score_plots[key]['mean'],row=row,col=1)
