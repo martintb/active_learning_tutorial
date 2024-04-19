@@ -4,6 +4,7 @@ import xarray as xr
 import pandas as pd
 import tqdm
 import warnings
+import shapely
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -38,7 +39,14 @@ def actively_learn(
 
     boundary_dataset = instrument.boundary_dataset.copy()
     boundary_dataset.attrs['components'] = ['b','c','a']
-    gt_hulls = trace_boundaries(boundary_dataset,hull_tracing_ratio=0.2)
+
+    gt_hulls = trace_boundaries(boundary_dataset,hull_tracing_ratio=0.25,drop_phases=['D'])
+    all_gt = shapely.unary_union(list(gt_hulls.values()))
+
+    # reconstruct "D" phase to be difference between all other phases and full ternary
+    xy = np.vstack([[0,1,0.5,0],[0,0,np.sqrt(3)/2,0]]).T
+    triangle = shapely.Polygon(xy)
+    gt_hulls['D'] = shapely.difference(triangle,all_gt)
 
     if plot_skip_phases is None:
       plot_skip_phases = []

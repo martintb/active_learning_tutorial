@@ -60,7 +60,8 @@ def trace_boundaries(
   drop_phases=None,
   reset=True, 
   component_attr='components',
-  label_attr='labels'
+  label_attr='labels',
+  segementize_length = 0.025
   ):
 
     if drop_phases is None:
@@ -76,6 +77,7 @@ def trace_boundaries(
         xy = ternary_to_xy(comps.values)
         mp = MultiPoint(xy)
         hull = concave_hull(mp,ratio=hull_tracing_ratio)
+        hull = hull.segmentize(segementize_length)
         hulls[label] = hull
 
     return hulls
