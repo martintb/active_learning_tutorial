@@ -37,7 +37,9 @@ class VirtualSAS:
         self.boundary_dataset = None
         self.data = {}
         self.noise = noise
-        
+        self.background = None
+
+    
     def trace_boundaries(self,hull_tracing_ratio=0.1,drop_phases=None,reset=True):
       
       if self.boundary_dataset is None:
@@ -183,43 +185,61 @@ class VirtualSAS:
       return dataset
 
 
-    def measure(self,a,b,c):
+    def measure(self,a,b,c,include_background=True):
         self.data['sample_composition'] = {
             'a':{'value':a,'units':''},
             'b':{'value':b,'units':''},
             'c':{'value':c,'units':''},
         }
         self._expose();
+
+        if include_background and self.background is None:
+            self.add_sasview_model(
+              label='bkg',
+              model_name = 'power_law',
+              model_kw = {
+                  'scale':1e-7,
+                  'background':1.0,
+                  'power':4.0,
+              }
+            )
+
+            self.background = self.generate('bkg')[1]
         
         sas = xr.DataArray(self.data['I'],coords={'q':self.data['q']})
+
+        if include_background:
+          sas = sas + self.background.values
+
         q_geom = np.geomspace(sas.q.min(),sas.q.max(), 250)
         sas = sas.groupby('q').mean().interp(q=q_geom)
 
-        #block negative values
-        with warnings.catch_warnings():
-          warnings.simplefilter("ignore")
-          log_sas = xr.DataArray(np.log10(sas.values),coords={'logq':np.log10(sas.q.values)})
 
-        delta_logq = (log_sas.logq[1] - log_sas.logq[0]).values[()]
-        dlog_sas_np = savgol_filter(log_sas, window_length=31, polyorder=2, delta=delta_logq,deriv=1)
-        dlog_sas = log_sas.copy(data=dlog_sas_np)
+        # #block negative values
+        # with warnings.catch_warnings():
+        #   warnings.simplefilter("ignore")
+        #   log_sas = xr.DataArray(np.log10(sas.values),coords={'logq':np.log10(sas.q.values)})
+# 
+        # delta_logq = (log_sas.logq[1] - log_sas.logq[0]).values[()]
+        # dlog_sas_np = savgol_filter(log_sas, window_length=31, polyorder=2, delta=delta_logq,deriv=1)
+        # dlog_sas = log_sas.copy(data=dlog_sas_np)
     
         dataset = xr.Dataset()
         dataset['sas'] = sas 
-        dataset['log_sas'] = log_sas
-        dataset['dlog_sas'] = dlog_sas
+        #dataset['log_sas'] = log_sas
+        #dataset['dlog_sas'] = dlog_sas
         dataset['a'] = a
         dataset['b'] = b
         dataset['c'] = c
 
         dataset['sas'].attrs['description'] = 'virtual scattering data'
-        dataset['log_sas'].attrs['description'] = 'log10 scaled virtual scattering data'
-        dataset['dlog_sas'].attrs['description'] = 'first derivative of log10 scaled virtual scattering data'
+        #dataset['log_sas'].attrs['description'] = 'log10 scaled virtual scattering data'
+        #dataset['dlog_sas'].attrs['description'] = 'first derivative of log10 scaled virtual scattering data'
         dataset['a'].attrs['description'] = 'Component "a" mass fraction (a+b+c=1.0)'
         dataset['b'].attrs['description'] = 'Component "b" mass fraction (a+b+c=1.0)'
         dataset['c'].attrs['description'] = 'Component "c" mass fraction (a+b+c=1.0)'
         dataset['q'].attrs['description'] = 'wavector/wavenumbers for virtual scattering intensity'
-        dataset['logq'].attrs['description'] = 'log10 scaled wavector/wavenumbers for virtual scattering intensity'
+        #dataset['logq'].attrs['description'] = 'log10 scaled wavector/wavenumbers for virtual scattering intensity'
         return dataset
     
     def _plot_ground_truth_data(self,**mpl_kw):
