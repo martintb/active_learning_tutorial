@@ -46,12 +46,12 @@ Use Deep Learning techniques to analyze large data sets.
 
 - Tyler Martin, National Institute of Standards and Technology; 
 - Peter Beaucage; National Institute of Standards and Technology
-- Shijin Sun, University of Washington
+- Shijing Sun, University of Washington
 - Gilad Kusne, National Institute of Standards and Technology
 
 **Announcing the 3rd Annual MLMR Materials Informatics Competition!**
 
-Each year MLMR teams up with a different industry partner to bring you a real-world materials informatics challenge. This year’s challenge is brought to you through a collaboration with the nSOFT Consortium, financial sponsors Cell Matter and Patterns, and support from the Materials Research Society. We present a challenge in Active Learning - the machine learning field used to drive recommendation engines and autonomous systems. The challenge runs April 22 - May 6, 2024 with $1000 in prizes with multiple winners! Click here for information and registration »
+Each year MLMR teams up with a different industry partner to bring you a real-world materials informatics challenge. This year’s challenge is brought to you through a collaboration with the nSOFT Consortium, financial sponsors Cell Matter and Patterns, and support from the Materials Research Society. We present a challenge in Active Learning - the machine learning field used to drive recommendation engines and autonomous systems. The challenge runs April 22 - May 6, 2024 with $1000 in prizes with multiple winners! Use the link at the top of the README to view the competition website and register for the competition.
 
 
 
