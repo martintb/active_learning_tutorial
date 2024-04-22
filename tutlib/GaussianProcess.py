@@ -4,7 +4,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
 import tensorflow as tf
 import gpflow
-from gpflow.utilities.traversal import leaf_components
 
 from tutlib.util import ternary_to_xy,xy_to_ternary
 
