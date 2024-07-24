@@ -192,6 +192,8 @@ def actively_learn(input_dataset: xr.Dataset, niter: int, num_phases: int, label
                         fig.add_trace(boundary_plots['pairs'], row=row, col=2)
                     row += 1
 
+                #fig.update_xaxes(type='log',row=row,col=1)
+                fig.update_yaxes(type='log',row=row,col=1)
             fig.update_layout(width=800, height=400 * n_rows)
             fig.show()
 
